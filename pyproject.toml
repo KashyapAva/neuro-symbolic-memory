@@ -1,0 +1,15 @@
+[project]
+name = "neuro-symbolic-memory"
+version = "0.1.0"
+description = "Prototype neuro-symbolic memory engine with typed graph memory, hypervector retrieval, trace learning, replay, and evaluation."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

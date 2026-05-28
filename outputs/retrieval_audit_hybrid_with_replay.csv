@@ -1,0 +1,31 @@
+run,query_symbols,retrieved_key,score,edge,domain,relation_family,active
+hybrid_with_replay,India + CAPITAL_CONTINENT + Asia,India-CAPITAL_CONTINENT-Asia,0.5171,India --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,India + CAPITAL_CONTINENT + Asia,Japan-CAPITAL_CONTINENT-Asia,0.2539,Japan --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,India + CAPITAL_CONTINENT + Asia,South Korea-CAPITAL_CONTINENT-Asia,0.2446,South Korea --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,France + CAPITAL_CONTINENT + Europe,France-CAPITAL_CONTINENT-Europe,0.4951,France --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,France + CAPITAL_CONTINENT + Europe,Italy-CAPITAL_CONTINENT-Europe,0.2422,Italy --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,France + CAPITAL_CONTINENT + Europe,Germany-CAPITAL_CONTINENT-Europe,0.2368,Germany --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Japan + CAPITAL_CONTINENT + Asia,Japan-CAPITAL_CONTINENT-Asia,0.5034,Japan --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Japan + CAPITAL_CONTINENT + Asia,India-CAPITAL_CONTINENT-Asia,0.2754,India --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Japan + CAPITAL_CONTINENT + Asia,South Korea-CAPITAL_CONTINENT-Asia,0.2529,South Korea --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Canada + CAPITAL_CONTINENT + North America,Canada-CAPITAL_CONTINENT-North America,0.4941,Canada --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Canada + CAPITAL_CONTINENT + North America,Mexico-CAPITAL_CONTINENT-North America,0.2554,Mexico --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Canada + CAPITAL_CONTINENT + North America,United States-CAPITAL_CONTINENT-North America,0.2329,United States --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Brazil + CAPITAL_CONTINENT + South America,Brazil-CAPITAL_CONTINENT-South America,0.5073,Brazil --CAPITAL_CONTINENT--> South America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Brazil + CAPITAL_CONTINENT + South America,Argentina-CAPITAL_CONTINENT-South America,0.248,Argentina --CAPITAL_CONTINENT--> South America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Brazil + CAPITAL_CONTINENT + South America,Brazil-HAS_CAPITAL-Brasilia,0.1865,Brazil --HAS_CAPITAL--> Brasilia,external_geo,EXPRESSES_PROPERTY,True
+hybrid_with_replay,Egypt + CAPITAL_CONTINENT + Africa,Egypt-CAPITAL_CONTINENT-Africa,0.5,Egypt --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Egypt + CAPITAL_CONTINENT + Africa,Nigeria-CAPITAL_CONTINENT-Africa,0.2769,Nigeria --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Egypt + CAPITAL_CONTINENT + Africa,Kenya-CAPITAL_CONTINENT-Africa,0.269,Kenya --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Australia + CAPITAL_CONTINENT + Oceania,Australia-CAPITAL_CONTINENT-Oceania,0.5112,Australia --CAPITAL_CONTINENT--> Oceania,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Australia + CAPITAL_CONTINENT + Oceania,Australia-HAS_CAPITAL-Canberra,0.209,Australia --HAS_CAPITAL--> Canberra,external_geo,EXPRESSES_PROPERTY,True
+hybrid_with_replay,Australia + CAPITAL_CONTINENT + Oceania,India-CAPITAL_CONTINENT-Asia,0.147,India --CAPITAL_CONTINENT--> Asia,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,United States + CAPITAL_CONTINENT + North America,United States-CAPITAL_CONTINENT-North America,0.4854,United States --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,United States + CAPITAL_CONTINENT + North America,Mexico-CAPITAL_CONTINENT-North America,0.2441,Mexico --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,United States + CAPITAL_CONTINENT + North America,Canada-CAPITAL_CONTINENT-North America,0.2271,Canada --CAPITAL_CONTINENT--> North America,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Germany + CAPITAL_CONTINENT + Europe,Germany-CAPITAL_CONTINENT-Europe,0.4814,Germany --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Germany + CAPITAL_CONTINENT + Europe,Italy-CAPITAL_CONTINENT-Europe,0.2612,Italy --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Germany + CAPITAL_CONTINENT + Europe,France-CAPITAL_CONTINENT-Europe,0.2554,France --CAPITAL_CONTINENT--> Europe,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Kenya + CAPITAL_CONTINENT + Africa,Kenya-CAPITAL_CONTINENT-Africa,0.5112,Kenya --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Kenya + CAPITAL_CONTINENT + Africa,Egypt-CAPITAL_CONTINENT-Africa,0.2598,Egypt --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True
+hybrid_with_replay,Kenya + CAPITAL_CONTINENT + Africa,Nigeria-CAPITAL_CONTINENT-Africa,0.2485,Nigeria --CAPITAL_CONTINENT--> Africa,external_geo_kgqa,NEARTO,True

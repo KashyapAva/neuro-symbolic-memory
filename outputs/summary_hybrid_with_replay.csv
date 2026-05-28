@@ -1,0 +1,16 @@
+run,phase,mode,tasks,accuracy,faithfulness,retention,avg_ms,replayed_edges
+hybrid_with_replay,Batch 1 External Geo KGQA after replay,hybrid,15,1.0,1.0,1.0,0.39929166669026017,0
+hybrid_with_replay,Batch 1 External Geo KGQA after replay,graph_only,15,1.0,1.0,1.0,0.004488934064283967,0
+hybrid_with_replay,Batch 1 External Geo KGQA after replay,vector_only,15,1.0,0.0,1.0,0.4019861322982858,0
+hybrid_with_replay,Batch 2 Math after replay,hybrid,18,1.0,1.0,1.0,0.4818356667076134,15
+hybrid_with_replay,Batch 2 Math after replay,graph_only,18,1.0,1.0,1.0,0.0049976661102846265,0
+hybrid_with_replay,Batch 2 Math after replay,vector_only,18,1.0,0.0,1.0,0.4782013889376281,0
+hybrid_with_replay,Batch 3 RCA after replay,hybrid,21,1.0,1.0,1.0,0.5480218096636236,18
+hybrid_with_replay,Batch 3 RCA after replay,graph_only,21,1.0,1.0,1.0,0.004807523163478999,0
+hybrid_with_replay,Batch 3 RCA after replay,vector_only,21,1.0,0.0,1.0,0.5523253819860873,0
+hybrid_with_replay,Batch 4 Forecast after replay,hybrid,24,1.0,1.0,1.0,0.666458333095458,21
+hybrid_with_replay,Batch 4 Forecast after replay,graph_only,24,1.0,1.0,1.0,0.005175332868626962,0
+hybrid_with_replay,Batch 4 Forecast after replay,vector_only,24,1.0,0.0,1.0,0.631444459334792,0
+hybrid_with_replay,Batch 5 Invalid Stress Test after replay,hybrid,24,1.0,1.0,1.0,0.625444458516237,24
+hybrid_with_replay,Batch 5 Invalid Stress Test after replay,graph_only,24,1.0,1.0,1.0,0.005137166832961763,0
+hybrid_with_replay,Batch 5 Invalid Stress Test after replay,vector_only,24,1.0,0.0,1.0,0.6252864586713258,0
