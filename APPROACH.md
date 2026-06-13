@@ -1,68 +1,42 @@
 # Approach
 
-## Problem interpretation
+The project goal is to demonstrate a neuro-symbolic memory engine, not only a static graph query system.
 
-I interpreted the assignment as a memory-system design problem rather than a model-training problem. The core challenge is to let a system store structured knowledge, retrieve relevant memory quickly, learn new relations from successful reasoning episodes, and retain earlier knowledge as new batches arrive.
+## Design choice
 
-The implementation separates the system into two complementary memory layers:
+The final prototype focuses on one realistic domain: **data observability / RCA**. The examples are coherent but varied: database bottleneck, schema drift, auth degradation, payment gateway outage, and cache-pressure counterexample.
 
-1. **Symbolic graph memory**: typed directed graph with provenance, proof paths, confidence, importance, absorption, and replay metadata.
-2. **Vector-symbolic memory**: hypervectors for approximate associative retrieval using similarity, binding, and bundling/superposition.
+## γ(3,4) graph backbone
 
-The final answer is not trusted just because the vector layer retrieves something. The vector layer proposes candidates; the graph layer verifies them.
+The symbolic graph is explicitly constrained as γ(3,4):
 
-## Design choices
+- **γ(3) node kinds**: Event, Thing, Concept.
+- **γ(4) relation families**: NEAR, LEADS_TO, CONTAINS, EXPRESSES.
 
-### 1. Start with typed graph memory
+The examples deliberately use all of them:
 
-I used a typed directed graph because the assignment emphasizes faithfulness, provenance, proofs, absorption metadata, and type consistency. A graph makes those constraints explicit and inspectable.
+- Event: incidents and outcome traces.
+- Thing: services, databases, pipelines, tables, columns, gateways.
+- Concept: signals, metrics, symptoms, causes, remediations, hypotheses, patterns.
+- NEAR: similar incident links.
+- LEADS_TO: signal→cause, cause→remediation, incident→root-cause.
+- CONTAINS: service/pipeline/database/table structure and dependencies.
+- EXPRESSES: incident symptoms, metrics, signals, affected services/pipelines.
 
-### 2. Add hypervector memory as fast retrieval
+This is not just a graph rename. The validator checks both γ-family compatibility and task-specific type constraints before learned memory is accepted.
 
-Each symbolic edge is encoded into a hypervector representation. This allows approximate retrieval of relevant memories before symbolic verification.
+## Memory layers
 
-### 3. Learn from successful traces
+- **Episodic/case memory** stores solved incidents and their features.
+- **Semantic graph memory** stores accepted root-cause relations with proof and provenance.
+- **Vector-symbolic memory** retrieves related graph edges and solved cases using high-dimensional feature encodings.
+- **Pattern memory** abstracts repeated feature signatures into reusable feature→cause patterns.
+- **Hypothesis memory** stores provisional predictions before the future outcome is known.
 
-A successful trace is a two-hop reasoning path that produced the correct answer. The trace learner mines this path and proposes a reusable shortcut relation.
+## Self-learning
 
-Example:
+The system does not use a manual confirmation button as the learning mechanism. A later resolved outcome trace acts as the feedback signal. If a provisional prediction matches the resolved outcome, it is promoted into graph memory. If not, it becomes a counterexample and its confidence is reduced. If no trusted outcome arrives, the hypothesis remains provisional and is not promoted.
 
-```text
-India --HAS_CAPITAL--> New Delhi
-New Delhi --LOCATED_IN--> Asia
-```
+## Robustness checks
 
-proposes:
-
-```text
-India --CAPITAL_CONTINENT--> Asia
-```
-
-### 4. Validate before absorption
-
-A learned relation is only added if it passes checks for:
-
-- relation schema;
-- source/target type compatibility;
-- confidence threshold;
-- duplicate relation;
-- proof path presence;
-- provenance.
-
-Invalid candidates are logged, not silently ignored.
-
-### 5. Evaluate continual learning
-
-Knowledge is added in sequential batches: external KGQA, math, RCA, forecast, invalid stress test. After each batch, all earlier tasks are re-evaluated. This measures whether old knowledge remains accessible after new learning.
-
-### 6. Add replay and ablation
-
-Replay refreshes important absorbed learned relations. A no-replay/decay ablation tests whether old knowledge degrades without maintenance.
-
-### 7. Add integration hook
-
-The `MemoryEngine` and `ReasoningFrameworkAdapter` expose a tool-like API so external reasoning systems can add facts, ingest traces, query memory, and retrieve verified context.
-
-## Scope
-
-The repository is a modular prototype. It demonstrates the required mechanisms and evaluation structure but is not positioned as a finished production system.
+The demo includes correct promotions, a wrong prediction/counterexample, invalid task-type rejection, invalid γ-family rejection, graph/vector/hybrid contrast, a repeated-access replay warmup that absorbs important memories, no-replay decay, persistence, integration adapter output, and explicit γ(3,4) coverage counts.

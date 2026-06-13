@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Tuple
 from .models import CandidateRelation
 from .graph_memory import SymbolicGraphMemory
-from .schema import ALLOWED_RELATION_TYPES
+from .schema import ALLOWED_RELATION_TYPES, gamma_transition_allowed, gamma_transition_reason
 
 class Validator:
     def __init__(self, graph: SymbolicGraphMemory) -> None:
@@ -19,11 +19,22 @@ class Validator:
             return False, "missing_target_node"
         if candidate.relation not in ALLOWED_RELATION_TYPES:
             return False, "unknown_relation_type"
-        exp_src, exp_dst = ALLOWED_RELATION_TYPES[candidate.relation]
+
+        # γ(3,4) family-level validation: edge family must be compatible with
+        # the source/destination gamma node kinds before more specific typing.
+        src_gamma = self.graph.nodes[candidate.src].gamma_class
+        dst_gamma = self.graph.nodes[candidate.dst].gamma_class
+        if not gamma_transition_allowed(src_gamma, candidate.relation, dst_gamma):
+            return False, gamma_transition_reason(src_gamma, candidate.relation, dst_gamma)
+
+        # Task-specific relation signature validation.
+        allowed_specific = ALLOWED_RELATION_TYPES[candidate.relation]
+        allowed_pairs = allowed_specific if isinstance(allowed_specific, list) else [allowed_specific]
         actual_src = self.graph.nodes[candidate.src].node_type
         actual_dst = self.graph.nodes[candidate.dst].node_type
-        if actual_src != exp_src or actual_dst != exp_dst:
-            return False, f"type_mismatch_expected_{exp_src}_to_{exp_dst}_got_{actual_src}_to_{actual_dst}"
+        if (actual_src, actual_dst) not in allowed_pairs:
+            expected = "_or_".join([f"{a}_to_{b}" for a, b in allowed_pairs])
+            return False, f"type_mismatch_expected_{expected}_got_{actual_src}_to_{actual_dst}"
         if not candidate.proof:
             return False, "missing_proof"
         return True, "accepted"

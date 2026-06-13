@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Dict, List, Optional, Tuple
 from .models import Node, Edge
-from .schema import gamma_class, relation_family
+from .schema import gamma_class, relation_family, summarize_gamma34
 
 class SymbolicGraphMemory:
     def __init__(self) -> None:
@@ -73,11 +73,25 @@ class SymbolicGraphMemory:
         Seed facts remain available, but old learned shortcuts can become inactive.
         """
         for edge in self.edges:
-            if edge.provenance.startswith("learned_from_trace") and (batch_num - edge.last_refreshed_batch) > max_staleness:
+            if self.is_memory_edge(edge) and (batch_num - edge.last_refreshed_batch) > max_staleness:
                 edge.active = False
 
+    @staticmethod
+    def is_memory_edge(edge: Edge) -> bool:
+        """Edges created by learning or confirmed memory transfer, not raw seed facts."""
+        return (
+            edge.provenance.startswith("learned_from_trace")
+            or edge.provenance.startswith("confirmed_from_similar_case")
+            or edge.provenance.startswith("auto_promoted_from_outcome_trace")
+        )
+
+
+    def gamma34_summary(self) -> dict:
+        """Return evidence that the graph is using all γ(3,4) roles."""
+        return summarize_gamma34(self.nodes.values(), self.edges)
+
     def learned_edges(self) -> List[Edge]:
-        return [e for e in self.edges if e.provenance.startswith("learned_from_trace")]
+        return [e for e in self.edges if self.is_memory_edge(e)]
 
     def absorbed_edges(self) -> List[Edge]:
         return [e for e in self.learned_edges() if e.absorbed and e.active]

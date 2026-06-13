@@ -1,88 +1,47 @@
 # Architecture
 
-## Main components
-
-| Module | Responsibility |
-|---|---|
-| `models.py` | Dataclasses for nodes, edges, traces, candidate relations, query tasks, and batches. |
-| `schema.py` | γ(3,4)-style node-class and relation-family mapping plus allowed relation types. |
-| `graph_memory.py` | Symbolic typed graph memory with edge verification, traversal, reinforcement, and decay. |
-| `hypervector_memory.py` | Vector-symbolic memory with symbol vectors, binding, bundling, similarity, and retrieval. |
-| `trace_learner.py` | Mines successful traces into candidate learned relations. |
-| `validator.py` | Validates candidate relations before memory update. |
-| `reasoner.py` | Implements hybrid, graph-only, and vector-only reasoning modes. |
-| `replay.py` | Maintains replay buffer for absorbed important learned edges. |
-| `evaluation.py` | Computes accuracy, faithfulness, retention, and latency. |
-| `benchmark_loader.py` | Loads the external geo KGQA benchmark file. |
-| `scenarios.py` | Builds sequential evaluation batches. |
-| `pipeline.py` | Runs the full experiment, baselines, replay, ablation, and CSV outputs. |
-| `integration.py` | Provides the external `MemoryEngine` and `ReasoningFrameworkAdapter`. |
-
-## Data flow
-
 ```text
-Seed facts + successful traces
-        |
-        v
-Typed symbolic graph  <------>  Hypervector memory
-        |                             |
-        |                             v
-        |                    Fast associative retrieval
-        |                             |
-        v                             |
-Trace learner proposes new relations  |
-        |                             |
-        v                             |
-Validator checks type/proof/provenance|
-        |                             |
-        v                             |
-Accepted relations update graph + hypervectors
-        |
-        v
-Reasoner answers with vector retrieval + graph verification
-        |
-        v
-Importance / absorption / replay
-        |
-        v
-Evaluation: accuracy, faithfulness, retention, latency
+MemoryEngine
+├── SymbolicGraphMemory      # γ(3,4) typed graph, proof, provenance, active/absorbed flags
+├── HypervectorMemory        # vector-symbolic retrieval over graph edges
+├── CaseMemory               # vector-symbolic retrieval over solved incidents
+├── PatternMemory            # feature signature -> root cause abstractions
+├── HypothesisMemory         # provisional/promoted/contradicted predictions
+├── TraceLearner             # resolved trace -> candidate relation
+├── Validator                # confidence + proof + γ-family + task-type checks
+├── ReplayBuffer             # reinforce important memories
+└── MemoryStore              # save/load graph + case + pattern + hypothesis state
 ```
 
-## γ(3,4)-style graph schema
+## γ(3,4) schema
 
-The prototype uses:
+```text
+Node kinds:
+  Event   = incidents, traces, prediction events
+  Thing   = services, databases, pipelines, tables, columns, gateways
+  Concept = signals, metrics, symptoms, causes, remediations, patterns
 
-- **3 node classes**: `Thing`, `Event`, `Concept`
-- **4 relation families**: `LEADS_TO`, `CONTAINS`, `EXPRESSES_PROPERTY`, `NEARTO`
+Relation families:
+  NEAR      = similarity, not truth
+  LEADS_TO  = causal/explanatory/remediation flow
+  CONTAINS  = system structure, dependency, part-whole
+  EXPRESSES = evidence, observed properties, metrics, symptoms
+```
 
-Domain-specific node types and relations map into this schema. For example:
+The validator uses this schema to prevent unsafe memory updates. For example:
 
-| Domain relation | Relation family |
-|---|---|
-| `HAS_CAPITAL` | `EXPRESSES_PROPERTY` |
-| `LOCATED_IN` | `CONTAINS` |
-| `CAPITAL_CONTINENT` | `NEARTO` |
-| `HAS_SOLUTION` | `LEADS_TO` |
-| `HAS_ROOT_CAUSE` | `LEADS_TO` |
-| `FORECAST_RISK` | `LEADS_TO` |
+- `Incident --HAS_ROOT_CAUSE--> Table` is rejected.
+- `Incident --SIMILAR_TO--> Table` is rejected because NEAR requires compatible γ kinds.
 
-## Reasoning modes
+## Flow
 
-| Mode | Description |
-|---|---|
-| `hybrid` | Hypervector retrieval proposes a candidate edge; symbolic graph verification confirms it. |
-| `graph_only` | Uses symbolic graph traversal/lookup only. |
-| `vector_only` | Uses nearest vector memory item only, without proof verification. |
-
-## Integration design
-
-`MemoryEngine` exposes a minimal API:
-
-- `add_node(...)`
-- `add_fact(...)`
-- `ingest_trace(...)`
-- `query(...)`
-- `retrieve_context(...)`
-- `consolidate()`
-
-`ReasoningFrameworkAdapter.as_tool()` returns a callable that can be registered as a tool/retriever in an external reasoning framework.
+1. A resolved incident trace enters the engine.
+2. The trace learner proposes a root-cause memory relation.
+3. The validator accepts only confidence-valid, proof-backed, γ-compatible, type-correct relations.
+4. Accepted relations are stored in graph memory and indexed by hypervectors.
+5. The solved case is also stored as case memory.
+6. Pattern memory updates feature→cause abstractions.
+7. Future unresolved incidents retrieve similar cases and learned patterns.
+8. The engine stores provisional hypotheses, not trusted facts.
+9. Future resolved traces promote or contradict hypotheses automatically.
+10. Repeated access raises importance; absorbed memories enter replay, are refreshed across time, and are contrasted with no-replay decay before persistence/reload.

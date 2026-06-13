@@ -1,174 +1,54 @@
-# Neuro-Symbolic Memory Engine and Self-Learning Loop
+# Neuro-Symbolic Memory Engine — Robust γ(3,4) Prototype
 
-This repository implements a modular prototype of a neuro-symbolic memory engine that combines:
+This repository contains a modular prototype of a neuro-symbolic memory engine and trace-supervised self-learning loop.
 
-1. **Symbolic graph memory** for typed, verifiable knowledge with provenance, proof paths, confidence, importance, absorption, and replay metadata.
-2. **Vector-symbolic / hypervector memory** for fast associative retrieval using similarity, binding, bundling/superposition, and permutation-style operations.
-3. **Trace-based self-learning** that mines successful reasoning, math, RCA, and forecast traces into new validated relations.
-4. **Dual-process reasoning** where hypervector retrieval proposes candidates and symbolic graph verification decides whether an answer is faithful.
-5. **Continual-learning maintenance** using importance scoring, absorption-aware triggers, replay, and no-replay ablation.
-6. **Integration hook** through `MemoryEngine` and `ReasoningFrameworkAdapter`, so an external reasoning framework can call the memory layer as a tool/retriever.
-
-The project is intentionally designed as a **prototype**: the goal is to demonstrate the required mechanisms clearly and reproducibly, not to claim a production-grade research framework.
-
----
-
-## Quick start
+Run the main demo:
 
 ```bash
-python3 -m pip install -r requirements.txt
 python3 demo.py
+python3 -m unittest discover -s tests -v
 ```
 
-Optional structured interactive demo:
+## What the demo shows
 
-```bash
-python3 demo_interactive.py
-```
+The demo uses one coherent domain: **data observability / RCA**. The examples are varied enough to exercise the graph constraints, not just one `incident -> signal -> cause` shape.
 
-Optional smoke test:
+It demonstrates:
 
-```bash
-python3 -m unittest discover -s tests
-```
+1. **γ(3,4)-typed graph memory** with Event, Thing, Concept nodes and NEAR, LEADS_TO, CONTAINS, EXPRESSES edge families.
+2. **Resolved trace learning**: solved incidents create trusted graph memory, case memory, vector memory, and pattern memory.
+3. **Fast associative retrieval + slow symbolic verification**: similar cases are retrieved by vector/case memory, but trusted answers require graph proof/provenance.
+4. **Hypothesis memory**: new unresolved incidents produce provisional hypotheses, not trusted facts.
+5. **Outcome-based self-learning**: later resolved traces promote correct hypotheses or store counterexamples for wrong predictions.
+6. **Type and γ-family validation**: invalid memory candidates are rejected.
+7. **Replay/decay and persistence**: repeatedly reused memories are absorbed, replayed, saved/reloaded, and contrasted with a no-replay forgetting stress test.
+8. **Integration adapter**: an external reasoning framework can call the engine as a retrieval/verification tool.
 
----
+## Why it is not just Graph RAG
 
-## What the main demo runs
-
-`demo.py` runs five sequential batches:
-
-1. **External geo KGQA benchmark** from `data/external_geo_kgqa.csv`
-   - Example path: `India --HAS_CAPITAL--> New Delhi --LOCATED_IN--> Asia`
-   - Learned relation: `India --CAPITAL_CONTINENT--> Asia`
-2. **Toy mathematical reasoning traces**
-   - Example path: `problem --HAS_EQUATION--> equation --EQUATION_SOLVES_TO--> solution`
-   - Learned relation: `problem --HAS_SOLUTION--> solution`
-3. **RCA / root-cause traces**
-   - Example path: `incident --HAS_SIGNAL--> signal --SIGNAL_POINTS_TO--> cause`
-   - Learned relation: `incident --HAS_ROOT_CAUSE--> cause`
-4. **Forecast-style traces**
-   - Example path: `case --HAS_TREND--> trend --TREND_IMPLIES_RISK--> risk`
-   - Learned relation: `case --FORECAST_RISK--> risk`
-5. **Invalid stress test**
-   - Demonstrates rejection of an invalid learned relation through type validation.
-
-After each batch, all previously seen tasks are re-evaluated to measure retention.
-
----
-
-## Baselines and ablations
-
-The demo evaluates:
-
-| Mode | Purpose |
-|---|---|
-| `hybrid` | Hypervector retrieval followed by symbolic verification. |
-| `graph_only` | Symbolic graph traversal/lookup without vector retrieval. |
-| `vector_only` | Approximate vector retrieval without symbolic verification. |
-| `hybrid_no_replay_decay` | Hybrid mode with replay disabled and stale learned edges decayed to demonstrate forgetting pressure. |
-
-Important interpretation:
-
-- Hybrid is not claimed to beat graph-only accuracy on controlled graph tasks.
-- Hybrid preserves graph-level faithfulness while adding fast associative retrieval.
-- Vector-only may retrieve plausible answers but does not provide verified support, so its faithfulness is intentionally reported as low.
-- No-replay ablation demonstrates the role of replay/consolidation in retaining earlier learned relations.
-
----
-
-## Repository structure
+A basic Graph RAG system retrieves context from a graph. This prototype also retrieves, but adds a memory lifecycle:
 
 ```text
-.
-├── README.md
-├── APPROACH.md
-├── ARCHITECTURE.md
-├── DEMO_REPORT.md
-├── REQUIREMENT_CHECKLIST.md
-├── demo.py
-├── demo_interactive.py
-├── requirements.txt
-├── pyproject.toml
-├── data/
-│   ├── external_geo_kgqa.csv
-│   └── README_BENCHMARK.md
-├── outputs/
-│   └── generated CSVs after running demo.py
-├── src/neuro_symbolic_memory/
-│   ├── models.py
-│   ├── schema.py
-│   ├── graph_memory.py
-│   ├── hypervector_memory.py
-│   ├── trace_learner.py
-│   ├── validator.py
-│   ├── reasoner.py
-│   ├── replay.py
-│   ├── evaluation.py
-│   ├── benchmark_loader.py
-│   ├── scenarios.py
-│   ├── integration.py
-│   └── pipeline.py
-└── tests/
-    └── test_smoke.py
+resolved trace -> candidate memory -> validation -> graph/case/vector/pattern update
+new incident -> provisional hypothesis -> future outcome -> promote / contradict / decay
 ```
 
----
+The graph is not just context. It is mutable, audited memory with typed constraints, proof/provenance, importance, replay, and active/inactive status.
 
-## Output files
+## Key files
 
-Running `python3 demo.py` writes CSVs under `outputs/`:
+- `demo.py` — main runnable demo.
+- `demo_robust_system.py` — end-to-end robust demo logic.
+- `GAMMA34_GRAPH.md` — explicit γ(3,4) schema explanation.
+- `src/neuro_symbolic_memory/schema.py` — γ(3,4) node kinds, edge families, and constraints.
+- `src/neuro_symbolic_memory/graph_memory.py` — trusted symbolic graph memory.
+- `src/neuro_symbolic_memory/hypervector_memory.py` — vector-symbolic associative retrieval.
+- `src/neuro_symbolic_memory/case_memory.py` — solved-case memory.
+- `src/neuro_symbolic_memory/pattern_memory.py` — reusable feature→cause patterns.
+- `src/neuro_symbolic_memory/hypothesis_memory.py` — provisional/promoted/contradicted hypotheses.
+- `src/neuro_symbolic_memory/integration.py` — integrated memory engine and adapter.
+- `tests/test_robust_system.py` — smoke tests for learning, promotion, validation, and γ(3,4) coverage.
 
-- `summary_hybrid_with_replay.csv`
-- `summary_hybrid_no_replay_decay.csv`
-- `combined_baseline_summary.csv`
-- `task_results_hybrid_with_replay.csv`
-- `final_learned_relations_hybrid_with_replay.csv`
-- `learned_candidates_hybrid_with_replay.csv`
-- `rejected_candidates_hybrid_with_replay.csv`
-- `retrieval_audit_hybrid_with_replay.csv`
-- `abstraction_summary_hybrid_with_replay.csv`
+## Limitations
 
-These files make the prototype auditable: accepted/rejected relations, proof paths, retrieval scores, task outcomes, retention, faithfulness, and latency are all inspectable.
-
----
-
-## Integration hook
-
-The integration-facing API is in `src/neuro_symbolic_memory/integration.py`.
-
-External systems can use:
-
-```python
-from neuro_symbolic_memory.integration import MemoryEngine, ReasoningFrameworkAdapter
-
-engine = MemoryEngine()
-engine.add_node(...)
-engine.add_fact(...)
-engine.ingest_trace(...)
-engine.consolidate()
-
-adapter = ReasoningFrameworkAdapter(engine)
-memory_tool = adapter.as_tool()
-result = memory_tool({
-    "subject": "India",
-    "target_relation": "CAPITAL_CONTINENT",
-    "expected": "Asia",
-    "mode": "hybrid",
-})
-```
-
-This adapter can be wrapped by an LLM agent, planner, rule engine, or external reasoning framework as a retrieval/verification tool.
-
----
-
-## Honest limitations
-
-This prototype implements all requested mechanisms at demonstration scale. Remaining production/research extensions include:
-
-- using a larger public KGQA benchmark such as MetaQA/WebQuestionsSP-style data;
-- replacing rule-based trace mining with a learned or LLM-assisted trace parser;
-- integrating with a specific framework such as LangChain, LlamaIndex, or DSPy;
-- adding a real LLM-only baseline if API access is available;
-- expanding the formal γ(3,4) alignment if a precise formal reference is supplied;
-- adding stronger adversarial continual-learning and conflict-resolution tests.
+This is a controlled prototype, not a production RCA system. It uses synthetic traces to demonstrate the required mechanisms. In production, resolved traces would come from trusted sources such as postmortems, incident tickets, monitoring labels, or analyst-reviewed RCA fields.

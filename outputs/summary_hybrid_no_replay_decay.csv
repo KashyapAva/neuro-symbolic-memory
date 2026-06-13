@@ -1,6 +1,0 @@
-run,phase,mode,tasks,accuracy,faithfulness,retention,avg_ms,replayed_edges
-hybrid_no_replay_decay,Batch 1 External Geo KGQA after replay,hybrid,15,1.0,1.0,1.0,0.39651113329455256,0
-hybrid_no_replay_decay,Batch 2 Math after replay,hybrid,18,1.0,1.0,1.0,0.4739490557565457,0
-hybrid_no_replay_decay,Batch 3 RCA after replay,hybrid,21,0.2857142857142857,0.2857142857142857,0.16666666666666666,0.41803771524601396,0
-hybrid_no_replay_decay,Batch 4 Forecast after replay,hybrid,24,0.25,0.25,0.14285714285714285,0.47644445779345307,0
-hybrid_no_replay_decay,Batch 5 Invalid Stress Test after replay,hybrid,24,0.125,0.125,0.125,0.44623091647129814,0

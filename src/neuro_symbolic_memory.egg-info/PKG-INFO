@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: neuro-symbolic-memory
-Version: 0.1.0
-Summary: Prototype neuro-symbolic memory engine with typed graph memory, hypervector retrieval, trace learning, replay, and evaluation.
-Requires-Python: >=3.10
-Requires-Dist: numpy
-Requires-Dist: pandas

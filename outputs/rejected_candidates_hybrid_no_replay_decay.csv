@@ -1,2 +1,0 @@
-run,batch,candidate,domain,confidence,reason,trace,rule,proof
-hybrid_no_replay_decay,Batch 5 Invalid Stress Test,London --ASSOCIATED_WITH--> Cambridge,kgqa,0.8,type_mismatch_expected_Entity_to_Place_got_Place_to_Place,invalid_trace_001,"(BORN_IN, LOCATED_IN) -> ASSOCIATED_WITH",London --BORN_IN--> Dave; Dave --LOCATED_IN--> Cambridge

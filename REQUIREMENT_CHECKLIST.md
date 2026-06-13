@@ -1,41 +1,58 @@
 # Requirement Checklist
 
-| Requirement from prompt | Implemented? | Where / evidence |
-|---|---:|---|
-| Modular prototype | Yes | `src/neuro_symbolic_memory/` modules, `demo.py`, CSV outputs, docs. |
-| Neuro-symbolic memory engine | Yes | Symbolic graph memory + hypervector memory. |
-| γ(3,4)-typed directed graph | Prototype-level yes | `schema.py`: 3 node classes + 4 relation families. |
-| Types, provenance, proofs, absorption metadata | Yes | `models.py`, `graph_memory.py`, final learned relation CSVs. |
-| Vector-symbolic representations | Yes | `hypervector_memory.py`. |
-| Similarity, binding, superposition | Yes | `HypervectorMemory.similarity`, `bind`, `bundle`. |
-| Trace-based self-learning | Yes | `trace_learner.py`, `pipeline.py`. |
-| Mine reasoning traces | Yes | External geo KGQA and math traces. |
-| Mine forecast/RCA traces | Yes | Forecast and RCA batches in `scenarios.py`. |
-| Extract new relations/abstractions | Yes | Learned shortcut relations and abstraction summaries. |
-| Update graph and vector memory | Yes | Accepted learned relations update both memories. |
-| Type consistency validation | Yes | `validator.py`; invalid stress test rejects bad relation. |
-| Lightweight proof linking | Yes | Learned edges store proof paths from source traces. |
-| Fast neural-style associative retrieval | Yes | Hypervector retrieval audit and hybrid reasoner. |
-| Slow symbolic verified traversal | Yes | `reasoner.py`, graph verification and proof support. |
-| Operator-based modular reasoning | Prototype-level yes | Rule/operator patterns in `trace_learner.py` and support patterns in `reasoner.py`. |
-| Hybrid retrieval | Yes | `mode='hybrid'`: vector retrieval then graph verification. |
-| Constrained generation | Prototype-level yes | Returns graph-supported answers and context, not free-form LLM text. |
-| Consolidation | Yes | `replay.py`, importance/absorption/replay loop. |
-| Importance scoring | Yes | Edges gain importance when used/replayed. |
-| Absorption-aware triggers | Yes | Edges become absorbed after importance threshold. |
-| Replay | Yes | Absorbed learned edges are refreshed by replay buffer. |
-| Continual-learning evaluation | Yes | Sequential batches and old-task re-evaluation. |
-| Reduced forgetting evaluation | Yes | Hybrid-with-replay vs no-replay/decay ablation. |
-| External benchmark | Yes, small benchmark | `data/external_geo_kgqa.csv`. |
-| Baseline comparisons | Yes | Hybrid, graph-only, vector-only, no-replay ablation. |
-| Faithfulness analysis | Yes | Faithfulness metric and proof-backed answers. |
-| Efficiency analysis | Basic yes | Average latency (`avg_ms`) in summary outputs. |
-| Integration with existing frameworks | Prototype-level yes | `MemoryEngine`, `ReasoningFrameworkAdapter`, `as_tool()`. |
+## Project goal
 
-## Remaining improvements if more time is available
+Design, implement, and evaluate a modular prototype of a neuro-symbolic memory engine and self-learning loop that can be integrated with reasoning frameworks.
 
-- Replace the mini external benchmark with a large public KGQA dataset.
-- Add a real LLM-only baseline if API access is available.
-- Plug the adapter directly into LangChain/LlamaIndex/DSPy rather than providing a framework-neutral adapter.
-- Add stronger adversarial/conflicting continual-learning streams.
-- Implement a more formal proof object instead of string proof paths.
+Status: **covered at prototype level**.
+
+## Neuro-symbolic memory engine
+
+- **Symbolic backbone**: `SymbolicGraphMemory` with typed nodes, directed edges, proof, provenance, confidence, importance, absorption, replay count, and active status.
+- **γ(3,4) graph**: explicitly implemented in `schema.py` and explained in `GAMMA34_GRAPH.md`.
+  - γ(3) node kinds: Event, Thing, Concept.
+  - γ(4) relation families: NEAR, LEADS_TO, CONTAINS, EXPRESSES.
+  - Demo prints coverage counts showing all three node kinds and all four relation families are used.
+- **Vector-symbolic memory**: `HypervectorMemory` and `CaseMemory` support similarity-based associative retrieval.
+
+## Trace-based self-learning pipeline
+
+- Resolved RCA traces are ingested with `ingest_resolved_episode`.
+- `TraceLearner` extracts candidate memory edges.
+- `Validator` checks confidence, proof, task-specific type constraints, and γ-family compatibility.
+- Accepted updates go into graph + hypervector memory.
+- Case/pattern memory is updated from solved episodes.
+
+## Dual-process reasoning integration
+
+- Fast path: vector/case memory retrieves similar prior episodes.
+- Slow path: graph memory verifies proof/provenance for trusted answers.
+- New incidents create provisional hypotheses rather than trusted facts.
+- Integration adapter exposes `retrieve` and `answer` methods for external reasoning frameworks.
+
+## Knowledge maintenance and continual learning
+
+- Hypotheses can be provisional, promoted, or contradicted.
+- Correct predictions are promoted by later resolved traces.
+- Wrong predictions become counterexamples.
+- Replay and no-replay decay are included as a retention/forgetting stress test: the demo repeatedly queries promoted memories, absorbs them, replays them, and contrasts this with stale learned edges deactivated under no-replay decay.
+- Memory is persisted to JSON and reloaded into a fresh engine.
+
+## Evaluation and analysis
+
+The main demo includes:
+
+- varied RCA cases: database bottleneck, schema drift, auth degradation, payment gateway outage, cache-pressure counterexample;
+- exact graph lookup before outcome (`not_found`);
+- vector-only vs graph-only vs hybrid comparison;
+- invalid task-type rejection;
+- invalid γ-family rejection;
+- γ(3,4) coverage summary;
+- persistence/reload and replay/decay summary;
+- integration adapter output.
+
+## Honest limitations
+
+- Synthetic prototype, not production-scale deployment.
+- Outcome traces are simulated; in production they should come from trusted incident tickets, postmortems, monitoring labels, or reviewed RCA fields.
+- The system performs trace-supervised self-learning, not unsupervised discovery of truth from nothing.
